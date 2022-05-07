@@ -2,6 +2,7 @@ const express   = require("express");
 const app       = express();
 const bp        = require("body-parser");
 const qr        = require("qrcode");
+const client    = require("./db");
 
 app.set("view engine", "ejs");
 app.use(bp.urlencoded({ extended: false }));
