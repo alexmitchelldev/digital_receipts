@@ -29,5 +29,10 @@ app.post("/scan", (req, res) => {
     });
 });
 
+app.post("/order", (req, res) => {
+    const orderObject = req.body;
+    res.render("order", {orderObject})
+});
+
 const port = 5000;
 app.listen(port, () => console.log("Server at 5000"));
