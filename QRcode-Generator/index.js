@@ -12,28 +12,66 @@ app.get("/", (req, res) => {
     res.render("index");
 });
 
-app.post("/scan", (req, res) => {
-    const url = req.body.url;
+app.post("/order", async (req, res) => {
+    const orderObject   = req.body;
+    const qrcodeURL     = `http://localhost:5000/orders/?id=${orderObject.orderID}`;
+    try {
+        const postOrderToDB = await client.query(`
+                                                with rows as (
+                                                    INSERT INTO orders (items, price) VALUES ('${orderObject.itemName}', ${orderObject.price}) RETURNING id
+                                                    )
+                                                    INSERT INTO qrcodes (order_id, url)
+                                                    SELECT id, CONCAT('http://localhost:5000/orders/?id=', id)
+                                                    FROM rows
+                                                    RETURNING url;
+                                                `);
+        const qrcodeURL = postOrderToDB.rows[0].url;
+        console.log(qrcodeURL);
+        qr.toDataURL(qrcodeURL, (err, qrcode) => {
+            if (err) {
+                res.send(`Error occured: ${qrcode}`);
+            }
+            res.render("order", {orderObject, qrcode}) 
+        });
+    } catch (err) {
+        console.log(err);
+    }
 
-    // If the input is null return "Empty Data" error
-    if (url.length === 0) res.send("Empty Data!");
-    
-    // Let us convert the input stored in the url and return it as a representation of the QR Code image contained in the Data URI(Uniform Resource Identifier)
-    // It shall be returned as a png image format
-    // In case of an error, it will save the error inside the "err" variable and display it
-    
-    qr.toDataURL(url, (err, src) => {
-        if (err) res.send("Error occured");
-      
-        // Let us return the QR code image as our response and set it to be the source used in the webpage
-        res.render("scan", { src });
-    });
 });
 
-app.post("/order", (req, res) => {
-    const orderObject = req.body;
-    res.render("order", {orderObject})
+app.get("/orders", async (req, res) => {
+    const orderID = req.query.id;
+   
+    try {
+        const results = await client.query(`select * from orders where id = ${orderID}`);
+        res.json(results.rows);
+    } catch (err) {
+        console.log(err);
+    }
 });
+
+app.get("/qrcode", async (req, res) => {
+    console.log(req.query);
+
+    try {
+        const results = await client.query(`select url from qrcodes where order_id = ${req.query.order_id}`);
+        res.json(results.rows);
+    } catch (err) {
+        console.log(err);
+    }
+});
+
+app.post("/deleteorders", async (rec, res) => {
+    try {
+        const deleteOrders = await client.query('delete from orders');
+        res.render("index");
+    } catch (err) {
+        console.log(err);
+    }
+})
+
+
+
 
 const port = 5000;
-app.listen(port, () => console.log("Server at 5000"));
+app.listen(port, () => console.log("Server started: http://localhost:5000"));
