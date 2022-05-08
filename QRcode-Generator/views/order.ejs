@@ -21,11 +21,17 @@
 
 <body>
     <div class="container">
+        <a href="/">
+            <button class="btn btn-primary">Home</button>
+        </a>
         <h1 class="text-center">ORDER</h1>
         <hr>
+        <p>Below is a summary of your order</p>
         <p><strong>Order ID: </strong><%=orderObject.orderID%></p>
         <p><strong>Item Name: </strong><%=orderObject.itemName%></p>
         <p><strong>Price: </strong><%=orderObject.price%></p>
+        <p>You can access your receipt using the below</p>
+        <img  height="200px" width="200px" src=<%=qrcode%> alt="QR Code Image">
     </div>
 </body>
 </html>
