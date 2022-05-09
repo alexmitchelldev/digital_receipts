@@ -15,23 +15,24 @@ app.get("/", (req, res) => {
 app.post("/order", async (req, res) => {
     const orderObject   = req.body;
     const qrcodeURL     = `http://localhost:5000/orders/?id=${orderObject.orderID}`;
+    
     try {
         const postOrderToDB = await client.query(`
                                                 with rows as (
-                                                    INSERT INTO orders (items, price) VALUES ('${orderObject.itemName}', ${orderObject.price}) RETURNING id
-                                                    )
+                                                    INSERT INTO orders (items, price, date_created)
+                                                    VALUES ('${orderObject.itemName}', ${orderObject.price}, NOW()) RETURNING id)
                                                     INSERT INTO qrcodes (order_id, url)
                                                     SELECT id, CONCAT('http://localhost:5000/orders/?id=', id)
                                                     FROM rows
-                                                    RETURNING url;
+                                                    RETURNING id, url;
                                                 `);
         const qrcodeURL = postOrderToDB.rows[0].url;
-        console.log(qrcodeURL);
+        const orderID   = postOrderToDB.rows[0].id;
         qr.toDataURL(qrcodeURL, (err, qrcode) => {
             if (err) {
-                res.send(`Error occured: ${qrcode}`);
+                res.send(`Error occured: ${err}`);
             }
-            res.render("order", {orderObject, qrcode}) 
+            res.render("order", {orderObject, qrcode, orderID}) 
         });
     } catch (err) {
         console.log(err);
@@ -41,9 +42,8 @@ app.post("/order", async (req, res) => {
 
 app.get("/orders", async (req, res) => {
     const orderID = req.query.id;
-   
     try {
-        const results = await client.query(`select * from orders where id = ${orderID}`);
+        const results = await client.query(`select * from orders where id = '${orderID}'`);
         res.json(results.rows);
     } catch (err) {
         console.log(err);
@@ -51,15 +51,32 @@ app.get("/orders", async (req, res) => {
 });
 
 app.get("/qrcode", async (req, res) => {
-    console.log(req.query);
-
+    console.log(req.query.order_id);
     try {
-        const results = await client.query(`select url from qrcodes where order_id = ${req.query.order_id}`);
-        res.json(results.rows);
+        const results = await client.query(`select url from qrcodes where order_id = '${req.query.order_id}'`);
+        console.log(results);
+        const qrcodeURL = results.rows[0].url;
+        
+        qr.toDataURL(qrcodeURL, (err, qrcode) => {
+            if (err) {
+                res.send(`Error occured: ${err}`);
+            }
+            res.render("qrcode", {qrcode}) 
+        });
     } catch (err) {
         console.log(err);
     }
 });
+
+app.get("/allorders", async (rec, res) => {
+    try {
+        const getOrders = await client.query('SELECT * FROM ORDERS');
+        const allOrders = getOrders.rows;
+        res.render("orders", {allOrders});
+    } catch (err) {
+        console.log(err);
+    }
+})
 
 app.post("/deleteorders", async (rec, res) => {
     try {
