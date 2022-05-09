@@ -26,12 +26,15 @@
         </a>
         <h1 class="text-center">ORDER</h1>
         <hr>
-        <p>Below is a summary of your order</p>
-        <p><strong>Order ID: </strong><%=orderObject.orderID%></p>
-        <p><strong>Item Name: </strong><%=orderObject.itemName%></p>
-        <p><strong>Price: </strong><%=orderObject.price%></p>
-        <p>You can access your receipt using the below</p>
-        <img  height="200px" width="200px" src=<%=qrcode%> alt="QR Code Image">
+        <ul>
+            <li><strong>Order ID:</strong> <%=orderID%></li>
+            <li><strong>Item Name:</strong> <%=orderObject.itemName%></li>
+            <li><strong>Price:</strong> <%=orderObject.price%></li>
+        </ul>
+        <hr>
+        <div class="row justify-content-center">
+            <img  height="200px" width="200px" src="<%=qrcode%>" alt="QR Code Image">
+        </div>
     </div>
 </body>
 </html>
