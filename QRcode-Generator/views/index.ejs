@@ -34,11 +34,7 @@
             <input name="price" type="Number" class="form-control" placeholder="Price" required>
             <br>
             <button type="submit" class="btn btn-primary" value="Submit Order">Submit</button>
-        </form>
-        <br>
-        <form action="/deleteorders" class="form" method="POST">
-            <button type="submit" class="btn btn-danger">DELETE ORDERS</button>
-        </form>
+        </form>      
         <br>
         <h4>GET QR CODE</h4>
         <form action="/qrcode" class="form" method="GET">
@@ -46,6 +42,17 @@
             <br>
             <button type="submit" class="btn btn-primary" value="Search QR Code">Get QR <Code></Code></button>
         </form>
+        
+        <hr>
+        <h4>ADMIN</h4>
+        <form action="/allorders" class="form" method="GET" >
+            <button type="submit" class="btn btn-primary">GET ALL ORDERS</button>
+        </form>
+        <br>
+        <form action="/deleteorders" class="form" method="POST">
+            <button type="submit" class="btn btn-danger">DELETE ALL ORDERS</button>
+        </form>
+        
     </div>
 </body>
 </html>
