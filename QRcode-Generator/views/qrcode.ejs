@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>QR Code Generator</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- Custom CSS -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
+        * {
+            font-family: Montserrat;
+        }
+        body {
+            margin: 10px;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        
+        <h1 class="text-center">YOUR ORDER QR CODE</h1>
+        <div class="row justify-content-center">
+            <img  height="250px" width="250px" src=<%=qrcode%> alt="QR Code Image">
+        </div>
+        <div class="row justify-content-center">
+            <a href="/">
+                <button class="btn btn-primary" style="width: 200px">Home</button>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
