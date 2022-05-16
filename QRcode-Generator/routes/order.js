@@ -1,3 +1,6 @@
+const client    = require("../dbHidden");
+const qr        = require("qrcode");
+
 module.exports = {
     getOrder: async function (req, res) {
         const orderID = req.query.id;
